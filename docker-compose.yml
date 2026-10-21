@@ -1,8 +1,11 @@
+name: open-meteo-react-app
 
 services:
-  backend:
+  # Nom du service interne pour Docker Compose
+  weather-backend:
     build: ./backend
-    container_name: node_backend
+    # Nom exact du conteneur visible dans "docker ps"
+    container_name: weather_backend_api
     ports:
       - "5000:5000"
     environment:
@@ -10,14 +13,16 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    restart: unless-stopped
 
-  frontend:
+  weather-frontend:
     build: ./frontend
-    container_name: react_frontend
+    container_name: weather_frontend_ui
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    depends_on:
+      - weather-backend
+    restart: unless-stopped
